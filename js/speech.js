@@ -1,24 +1,15 @@
-let isListening = false;
-
-/* ---------------------------------------
-   SPEECH RECOGNITION
---------------------------------------- */
-
 const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
 
 let recognition = null;
-let listeningButton = null;
+let isListening = false;
 let listeningInput = null;
+let listeningButton = null;
 let listeningLabel = "";
+let finalTranscript = "";
 
 function toggleSpeech() {
-    toggleListening(
-        "hi-IN",
-        "hindiText",
-        "speakButton",
-        "🎤 Speak Hindi"
-    );
+    toggleListening("hi-IN", "hindiText", "speakButton", "🎤 Speak Hindi");
 }
 
 function toggleEnglishSpeech() {
@@ -30,118 +21,100 @@ function toggleEnglishSpeech() {
     );
 }
 
-async function toggleListening(
-    language,
-    inputId,
-    buttonId,
-    defaultLabel
-) {
-    if (recognition) {
+function toggleListening(language, inputId, buttonId, defaultLabel) {
+    if (isListening && recognition) {
         recognition.stop();
         return;
     }
 
     if (!SpeechRecognition) {
-        setStatus(
-            "Speech input is unsupported. Use Chrome or Edge."
-        );
+        setStatus("Use Google Chrome or Microsoft Edge for speech input.");
         return;
     }
 
     if (!window.isSecureContext) {
-        setStatus("Microphone access requires HTTPS or localhost.");
+        setStatus("Open this page using HTTPS or http://localhost.");
         return;
     }
 
+    listeningInput = document.getElementById(inputId);
+    listeningButton = document.getElementById(buttonId);
+    listeningLabel = defaultLabel;
+    finalTranscript = listeningInput.value.trim();
+
+    recognition = new SpeechRecognition();
+    recognition.lang = language;
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+        isListening = true;
+        listeningButton.textContent = "⏹ Stop listening";
+        listeningButton.classList.add("listening-button");
+        setStatus("Listening… speak now.", true);
+    };
+
+    recognition.onresult = event => {
+        let interimTranscript = "";
+
+        for (
+            let index = event.resultIndex;
+            index < event.results.length;
+            index++
+        ) {
+            const text = event.results[index][0].transcript;
+
+            if (event.results[index].isFinal) {
+                finalTranscript += `${text} `;
+            } else {
+                interimTranscript += text;
+            }
+        }
+
+        listeningInput.value =
+            `${finalTranscript}${interimTranscript}`.trim();
+    };
+
+    recognition.onerror = event => {
+        const messages = {
+            "not-allowed": "Microphone permission was denied.",
+            "service-not-allowed": "Speech recognition is blocked.",
+            "audio-capture": "No microphone was found.",
+            "no-speech": "No speech was detected.",
+            network: "Speech recognition requires an internet connection."
+        };
+
+        setStatus(messages[event.error] || `Speech error: ${event.error}`);
+        console.error("Speech recognition error:", event.error);
+    };
+
+    recognition.onend = () => {
+        isListening = false;
+
+        if (listeningButton) {
+            listeningButton.textContent = listeningLabel;
+            listeningButton.classList.remove("listening-button");
+        }
+
+        recognition = null;
+        listeningInput = null;
+        listeningButton = null;
+
+        setStatus("Ready");
+    };
+
     try {
-        const microphone =
-            await navigator.mediaDevices.getUserMedia({
-                audio: true
-            });
-
-        // Permission has been granted. SpeechRecognition controls the mic.
-        microphone.getTracks().forEach(track => track.stop());
-
-        listeningInput = document.getElementById(inputId);
-        listeningButton = document.getElementById(buttonId);
-        listeningLabel = defaultLabel;
-
-        recognition = new SpeechRecognition();
-        recognition.lang = language;
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.maxAlternatives = 1;
-
-        recognition.onstart = () => {
-            listeningButton.textContent = "⏹ Stop listening";
-            listeningButton.classList.add("listening-button");
-            setStatus("Listening… speak now, then press Stop.", true);
-        };
-
-        recognition.onresult = event => {
-            let transcript = "";
-
-            for (
-                let index = event.resultIndex;
-                index < event.results.length;
-                index++
-            ) {
-                transcript += event.results[index][0].transcript;
-            }
-
-            if (transcript.trim()) {
-                listeningInput.value = transcript.trim();
-                listeningInput.dispatchEvent(
-                    new Event("input", { bubbles: true })
-                );
-            }
-        };
-
-        recognition.onerror = event => {
-            const errors = {
-                "not-allowed": "Microphone permission was denied.",
-                "audio-capture": "No microphone was found.",
-                "no-speech": "No speech was detected.",
-                network: "Speech recognition requires internet access."
-            };
-
-            setStatus(
-                errors[event.error] ||
-                `Speech recognition error: ${event.error}`
-            );
-        };
-
-        recognition.onend = () => {
-            if (listeningButton) {
-                listeningButton.textContent = listeningLabel;
-                listeningButton.classList.remove("listening-button");
-            }
-
-            recognition = null;
-            listeningButton = null;
-            listeningInput = null;
-            setStatus("Ready");
-        };
-
         recognition.start();
     } catch (error) {
-        console.error("Microphone error:", error);
-
-        setStatus(
-            error.name === "NotAllowedError"
-                ? "Microphone permission was denied."
-                : "Microphone could not be accessed."
-        );
-
+        console.error(error);
+        setStatus("Speech recognition could not start.");
         recognition = null;
     }
 }
 
-
 function stopSpeech() {
-
     if (recognition) {
-
         recognition.stop();
     }
 }
