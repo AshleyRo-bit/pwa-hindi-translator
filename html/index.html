@@ -112,6 +112,42 @@
 
 </div>
 
+<div class="card">
+    <span class="label">📷 Scan and translate text</span>
+
+    <label for="ocrLanguage">Text language</label>
+    <select id="ocrLanguage">
+        <option value="hin">Hindi</option>
+        <option value="eng">English</option>
+    </select>
+
+    <button class="secondary" type="button" onclick="openCamera()">
+        Open Camera
+    </button>
+
+    <video id="camera"
+           class="camera-preview"
+           autoplay
+           playsinline></video>
+
+    <button id="captureButton"
+            type="button"
+            hidden
+            onclick="captureImage()">
+        📸 Capture and translate
+    </button>
+
+    <button id="closeCameraButton"
+            class="secondary"
+            type="button"
+            hidden
+            onclick="closeCamera()">
+        Close Camera
+    </button>
+
+    <canvas id="canvas" hidden></canvas>
+</div>
+
 <div id="status"
      class="status"
      role="status"

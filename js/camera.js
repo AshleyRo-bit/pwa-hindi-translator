@@ -1,14 +1,15 @@
 /* ---------------------------------------
-   CAMERA AND OCR
+   CAMERA, OCR, AND TRANSLATION
 --------------------------------------- */
 
 let cameraStream = null;
 let ocrWorker = null;
-let ocrLoading = false;
+let ocrLanguage = null;
 
 async function openCamera() {
     const video = document.getElementById("camera");
     const captureButton = document.getElementById("captureButton");
+    const closeButton = document.getElementById("closeCameraButton");
 
     if (!window.isSecureContext) {
         setStatus("Camera access requires HTTPS or localhost.");
@@ -31,22 +32,55 @@ async function openCamera() {
         });
 
         video.srcObject = cameraStream;
-        video.style.display = "block";
-        captureButton.style.display = "block";
+        video.hidden = false;
+        captureButton.hidden = false;
+        closeButton.hidden = false;
 
         await video.play();
-        setStatus("Camera ready. Position the text and tap Capture.");
+        setStatus("Camera ready. Position the text and capture it.");
     } catch (error) {
         console.error("Camera error:", error);
         setStatus("Camera permission was denied or unavailable.");
     }
 }
 
+async function getOcrWorker(language) {
+    if (ocrWorker && ocrLanguage === language) {
+        return ocrWorker;
+    }
+
+    if (ocrWorker) {
+        await ocrWorker.terminate();
+        ocrWorker = null;
+    }
+
+    setStatus("Loading OCR language data…");
+
+    ocrWorker = await Tesseract.createWorker(language, 1, {
+        logger: message => {
+            if (message.status === "loading language") {
+                setStatus("Loading OCR language…");
+            }
+
+            if (message.status === "recognizing text") {
+                const progress = Math.round(
+                    (message.progress || 0) * 100
+                );
+
+                setStatus(`Reading text… ${progress}%`);
+            }
+        }
+    });
+
+    ocrLanguage = language;
+    return ocrWorker;
+}
+
 async function captureImage() {
     const video = document.getElementById("camera");
     const canvas = document.getElementById("canvas");
     const captureButton = document.getElementById("captureButton");
-    const hindiInput = document.getElementById("hindiText");
+    const language = document.getElementById("ocrLanguage").value;
 
     if (!video.videoWidth || !video.videoHeight) {
         setStatus("Camera is not ready yet.");
@@ -59,7 +93,6 @@ async function captureImage() {
     }
 
     captureButton.disabled = true;
-    setStatus("Capturing image…");
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -77,66 +110,54 @@ async function captureImage() {
     );
 
     try {
-        if (!ocrWorker) {
-            ocrLoading = true;
-            setStatus("Loading Hindi OCR language data…");
-
-            ocrWorker = await Tesseract.createWorker("hin+eng", 1, {
-                logger: message => {
-                    if (message.status === "loading language") {
-                        setStatus("Loading OCR language…");
-                    }
-
-                    if (message.status === "recognizing text") {
-                        const percent = Math.round(
-                            (message.progress || 0) * 100
-                        );
-
-                        setStatus(`Reading text… ${percent}%`);
-                    }
-                }
-            });
-
-            ocrLoading = false;
-        }
-
-        setStatus("Reading text from image…");
-
-        const result = await ocrWorker.recognize(canvas);
+        const worker = await getOcrWorker(language);
+        const result = await worker.recognize(canvas);
         const text = result.data.text.trim();
 
         if (!text) {
             setStatus(
-                "No text detected. Use better lighting and hold the camera steady."
+                "No text detected. Try better lighting or hold the camera steady."
             );
             return;
         }
 
-        hindiInput.value = text;
-        hindiInput.lang = "hi";
-        hindiInput.dir = "auto";
+        if (language === "eng") {
+            document.getElementById("englishInput").value = text;
+            await translateEnglishToHindi();
+        } else {
+            document.getElementById("hindiText").value = text;
+            await translateHindiToEnglish();
+        }
 
-        setStatus("Text detected. You can now translate it.");
+        setStatus("Text detected and translated.");
     } catch (error) {
         console.error("OCR error:", error);
-        setStatus("Could not read text from the image.");
+        setStatus("Could not read or translate the captured text.");
     } finally {
         captureButton.disabled = false;
     }
 }
 
-function closeCamera() {
+async function closeCamera() {
     cameraStream?.getTracks().forEach(track => track.stop());
+    cameraStream = null;
 
     const video = document.getElementById("camera");
     const captureButton = document.getElementById("captureButton");
+    const closeButton = document.getElementById("closeCameraButton");
 
+    video.pause();
     video.srcObject = null;
-    video.style.display = "none";
-    captureButton.style.display = "none";
+    video.hidden = true;
+    captureButton.hidden = true;
+    closeButton.hidden = true;
+
+    setStatus("Camera closed.");
 }
 
 window.addEventListener("beforeunload", () => {
     cameraStream?.getTracks().forEach(track => track.stop());
     ocrWorker?.terminate();
 });
+
+<script src="../js/translateText.js?v=3" defer></script>
