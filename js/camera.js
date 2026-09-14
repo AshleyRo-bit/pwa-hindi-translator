@@ -159,5 +159,3 @@ window.addEventListener("beforeunload", () => {
     cameraStream?.getTracks().forEach(track => track.stop());
     ocrWorker?.terminate();
 });
-
-<script src="../js/translateText.js?v=3" defer></script>

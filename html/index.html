@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/styles.css">
-    <script src="../js/translateText.js?v=2" defer></script>
+    <script src="../js/translateText.js?v=4" defer></script>
     <title>Hindi Translator</title>
 
 </head>
@@ -117,32 +117,33 @@
 
     <label for="ocrLanguage">Text language</label>
     <select id="ocrLanguage">
-        <option value="hin">Hindi</option>
         <option value="eng">English</option>
+        <option value="hin">Hindi</option>
     </select>
 
     <button class="secondary" type="button" onclick="openCamera()">
-        Open Camera
+        Open camera
     </button>
 
     <video id="camera"
            class="camera-preview"
            autoplay
-           playsinline></video>
+           playsinline
+           hidden></video>
 
     <button id="captureButton"
             type="button"
-            hidden
-            onclick="captureImage()">
+            onclick="captureImage()"
+            hidden>
         📸 Capture and translate
     </button>
 
     <button id="closeCameraButton"
             class="secondary"
             type="button"
-            hidden
-            onclick="closeCamera()">
-        Close Camera
+            onclick="closeCamera()"
+            hidden>
+        Close camera
     </button>
 
     <canvas id="canvas" hidden></canvas>
