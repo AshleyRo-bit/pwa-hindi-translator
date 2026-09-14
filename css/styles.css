@@ -99,3 +99,28 @@
     .future {
         opacity: 0.65;
     }
+.camera-preview {
+
+        width: 100%;
+
+        border-radius: 14px;
+
+        display: none;
+
+        margin-top: 12px;
+
+        background: black;
+
+    }
+
+    .small {
+
+        color: #6e6e73;
+
+        font-size: 13px;
+
+        line-height: 1.4;
+
+        margin-top: 10px;
+
+    }

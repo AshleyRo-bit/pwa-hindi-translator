@@ -12,64 +12,103 @@
 
 <body>
     <div class="app">
-    <h1>Hindi Translator</h1>
+<h1>Hindi Translator</h1>
 
 <div class="subtitle">
     Hindi → English
 </div>
 
+<!-- HINDI INPUT -->
 <div class="card">
 
-    <span class="label">Hindi</span>
+    <span class="label">
+        🇮🇳 Hindi
+    </span>
 
     <textarea
         id="hindiText"
-        placeholder="Type or speak Hindi here..."
+        placeholder="Type Hindi or press Speak..."
+        lang="hi"
     ></textarea>
+
+    <button id="speakButton"
+            onclick="toggleSpeech()">
+        🎤 Speak Hindi
+    </button>
 
     <button onclick="translateText()">
         Translate
     </button>
 
-    <button class="secondary" onclick="startSpeech()">
-        🎤 Speak Hindi
+    <button class="secondary"
+            onclick="clearText()">
+        Clear
     </button>
 
 </div>
 
+<!-- ENGLISH OUTPUT -->
 <div class="card">
 
-    <span class="label">English</span>
+    <span class="label">
+        🇬🇧 English
+    </span>
 
-    <div
-        id="englishText"
-        class="translation"
-    >
+    <div id="englishText"
+         class="translation">
         Translation will appear here.
     </div>
 
-    <button class="secondary" onclick="speakEnglish()">
+    <button class="secondary"
+            onclick="speakEnglish()">
         🔊 Speak English
     </button>
 
 </div>
 
-<div class="card future">
+<!-- CAMERA -->
+<div class="card">
 
-    <span class="label">Camera</span>
+    <span class="label">
+        📷 Camera
+    </span>
 
-    <button class="secondary" onclick="openCamera()">
-        📷 Translate Camera
+    <button class="secondary"
+            onclick="openCamera()">
+        Open Camera
     </button>
+
+    <video id="camera"
+           class="camera-preview"
+           autoplay
+           playsinline>
+    </video>
+
+    <button id="captureButton"
+            style="display:none"
+            onclick="captureImage()">
+        📸 Capture
+    </button>
+
+    <canvas id="canvas"
+            style="display:none">
+    </canvas>
+
+    <div class="small">
+        Camera translation will be added after
+        speech translation is working.
+    </div>
 
 </div>
 
-<div
-    id="status"
-    class="status"
->
+<div id="status"
+     class="status">
     Ready
 </div>
 </div>
+<script src="../js/clearText.js"> </script>
+<script src="../js/camera.js"></script>
+<script src="../js/speech.js"></script>
+<script src="../js/status.js"></script>
 </body>
 </html>

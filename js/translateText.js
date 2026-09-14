@@ -1,25 +1,27 @@
-function translateText() {
+async function translateText() {
 
-    const hindi = document
-        .getElementById("hindiText")
-        .value
-        .trim();
+    const hindi =
+        document
+            .getElementById("hindiText")
+            .value
+            .trim();
 
-    const output = document
-        .getElementById("englishText");
+    const output =
+        document
+            .getElementById("englishText");
 
     if (!hindi) {
-        output.textContent = "Please enter some Hindi text.";
+
+        output.textContent =
+            "Please enter or speak some Hindi.";
+
         return;
     }
 
-    /*
-     * Translation service will be connected here
-     * in the next stage.
-     */
-
     output.textContent =
-        "Translation service coming next...";
+        "Translation service will be connected next.";
+
+    setStatus("Ready for translation backend.");
 }
 
 
@@ -103,9 +105,3 @@ function speakEnglish() {
     speechSynthesis.speak(utterance);
 }
 
-
-function openCamera() {
-
-    document.getElementById("status").textContent =
-        "Camera translation will be added next.";
-}
