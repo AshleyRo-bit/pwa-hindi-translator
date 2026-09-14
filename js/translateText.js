@@ -1,29 +1,61 @@
-async function translateText() {
+/* ---------------------------------------
+   TRANSLATION
+--------------------------------------- */
 
-    const hindi =
-        document
-            .getElementById("hindiText")
-            .value
-            .trim();
-
-    const output =
-        document
-            .getElementById("englishText");
-
-    if (!hindi) {
-
-        output.textContent =
-            "Please enter or speak some Hindi.";
-
-        return;
+async function translate(source, target, text) {
+    if (!text.trim()) {
+        setStatus("Enter some text first.");
+        return "";
     }
 
-    output.textContent =
-        "Translation service will be connected next.";
+    setStatus("Translating…");
 
-    setStatus("Ready for translation backend.");
+    const url =
+        "https://api.mymemory.translated.net/get" +
+        `?q=${encodeURIComponent(text)}` +
+        `&langpair=${source}|${target}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error("Translation request failed.");
+    }
+
+    const data = await response.json();
+    return data.responseData.translatedText;
 }
 
+async function translateHindiToEnglish() {
+    try {
+        const hindi = document.getElementById("hindiText").value;
+        const english = await translate("hi", "en", hindi);
+
+        document.getElementById("englishInput").value = english;
+        document.getElementById("englishText").textContent = english;
+        setStatus("Translated to English.");
+    } catch (error) {
+        console.error(error);
+        setStatus("Translation failed. Check your internet connection.");
+    }
+}
+
+async function translateEnglishToHindi() {
+    try {
+        const english = document.getElementById("englishInput").value;
+        const hindi = await translate("en", "hi", english);
+
+        document.getElementById("hindiText").value = hindi;
+        setStatus("Translated to Hindi.");
+    } catch (error) {
+        console.error(error);
+        setStatus("Translation failed. Check your internet connection.");
+    }
+}
+
+/* Backward compatibility with the original Hindi translate button. */
+function translateText() {
+    return translateHindiToEnglish();
+}
 
 function startSpeech() {
 

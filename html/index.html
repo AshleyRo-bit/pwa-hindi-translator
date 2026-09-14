@@ -15,7 +15,7 @@
 <h1>Hindi Translator</h1>
 
 <div class="subtitle">
-    Hindi → English
+    Hindi ↔ English
 </div>
 
 <!-- HINDI INPUT -->
@@ -27,41 +27,38 @@
 
     <textarea
         id="hindiText"
-        placeholder="Type Hindi or press Speak..."
-        lang="hi"
-    ></textarea>
+        placeholder="Type Hindi or press Speak Hindi..."
+        lang="hi"></textarea>
 
-    <button id="speakButton"
-            onclick="toggleSpeech()">
+    <button id="speakButton" onclick="toggleSpeech()">
         🎤 Speak Hindi
     </button>
 
-    <button onclick="translateText()">
-        Translate
-    </button>
-
-    <button class="secondary"
-            onclick="clearText()">
-        Clear
+    <button onclick="translateHindiToEnglish()">
+        Translate to English
     </button>
 
 </div>
 
-<!-- ENGLISH OUTPUT -->
+<!-- ENGLISH INPUT -->
 <div class="card">
 
     <span class="label">
         🇬🇧 English
     </span>
 
-    <div id="englishText"
-         class="translation">
-        Translation will appear here.
-    </div>
+    <textarea
+        id="englishInput"
+        placeholder="Type English or press Speak English..."
+        lang="en"></textarea>
 
-    <button class="secondary"
-            onclick="speakEnglish()">
-        🔊 Speak English
+    <button id="englishSpeakButton"
+            onclick="toggleEnglishSpeech()">
+        🎤 Speak English
+    </button>
+
+    <button onclick="translateEnglishToHindi()">
+        Translate to Hindi
     </button>
 
 </div>
@@ -108,7 +105,7 @@
 </div>
 <script src="../js/clearText.js"> </script>
 <script src="../js/camera.js"></script>
-<script src="../js/speech.js"></script>
 <script src="../js/status.js"></script>
+<script src="../js/speech.js"></script>
 </body>
 </html>
