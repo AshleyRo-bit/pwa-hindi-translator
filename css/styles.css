@@ -146,3 +146,30 @@
         background-color: #b91c1c;
         color: #ffffff;
     }
+
+    .speech-button,
+    .microphone-test-button {
+        width: 100%;
+        margin-top: 0.75rem;
+    }
+
+    .speech-button.listening-button {
+        background: #b42318;
+        color: #ffffff;
+    }
+
+    .status.listening {
+        background: #fff1f0;
+        color: #b42318;
+        border: 1px solid #f3b4ae;
+    }
+
+    .status.listening::before {
+        content: "● ";
+    }
+
+    .microphone-test-button {
+        background: transparent;
+        color: #555;
+        border: 1px solid #bbb;
+    }

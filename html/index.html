@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/styles.css">
-    <script src="../js/translateText.js" defer></script>
+    <script src="../js/translateText.js?v=2" defer></script>
     <title>Hindi Translator</title>
 
 </head>
@@ -35,7 +35,13 @@
         class="speech-button"
         type="button"
         onclick="toggleSpeech()">
-    🎤 Start Hindi
+    🎤 Speak Hindi
+    </button>
+
+    <button class="microphone-test-button"
+        type="button"
+        onclick="testMicrophone()">
+    Test microphone
     </button>
 
     <button onclick="translateHindiToEnglish()">
@@ -61,7 +67,7 @@
         class="speech-button"
         type="button"
         onclick="toggleEnglishSpeech()">
-    🎤 Start English
+    🎤 Speak English
     </button>
 
     <button onclick="translateEnglishToHindi()">
@@ -112,7 +118,7 @@
     Ready
 </div>
 </div>
-<script src="../js/clearText.js"> </script>
+<script src="../js/clearText.js"></script>
 <script src="../js/camera.js"></script>
 <script src="../js/status.js"></script>
 <script src="../js/speech.js"></script>
