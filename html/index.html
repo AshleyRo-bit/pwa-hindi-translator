@@ -95,13 +95,14 @@
     </video>
 
     <button id="captureButton"
-            style="display:none"
+            type="button"
+            style="display: none"
             onclick="captureImage()">
-        📸 Capture
+        📸 Capture and read text
     </button>
 
     <canvas id="canvas"
-            style="display:none">
+            style="display: none">
     </canvas>
 
     <div class="small">
@@ -119,8 +120,9 @@
 </div>
 </div>
 <script src="../js/clearText.js"></script>
-<script src="../js/camera.js"></script>
 <script src="../js/status.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="../js/camera.js"></script>
 <script src="../js/speech.js"></script>
 </body>
 </html>
