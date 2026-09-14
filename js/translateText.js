@@ -4,11 +4,8 @@
 
 async function translate(source, target, text) {
     if (!text.trim()) {
-        setStatus("Enter some text first.");
-        return "";
+        throw new Error("Please enter text first.");
     }
-
-    setStatus("Translating…");
 
     const url =
         "https://api.mymemory.translated.net/get" +
@@ -22,33 +19,61 @@ async function translate(source, target, text) {
     }
 
     const data = await response.json();
-    return data.responseData.translatedText;
+    const translation = data?.responseData?.translatedText;
+
+    if (!translation) {
+        throw new Error("No translation was returned.");
+    }
+
+    return translation;
 }
 
 async function translateHindiToEnglish() {
-    try {
-        const hindi = document.getElementById("hindiText").value;
-        const english = await translate("hi", "en", hindi);
+    const hindiInput = document.getElementById("hindiText");
+    const englishInput = document.getElementById("englishInput");
 
-        document.getElementById("englishInput").value = english;
-        document.getElementById("englishText").textContent = english;
-        setStatus("Translated to English.");
+    try {
+        setStatus("Translating Hindi to English…");
+
+        const english = await translateText(
+            hindiInput.value,
+            "hi",
+            "en"
+        );
+
+        englishInput.value = english;
+        englishInput.lang = "en";
+        englishInput.dir = "auto";
+
+        setStatus("English translation ready.");
     } catch (error) {
         console.error(error);
-        setStatus("Translation failed. Check your internet connection.");
+        setStatus(error.message || "Translation failed.");
     }
 }
 
 async function translateEnglishToHindi() {
-    try {
-        const english = document.getElementById("englishInput").value;
-        const hindi = await translate("en", "hi", english);
+    const englishInput = document.getElementById("englishInput");
+    const hindiInput = document.getElementById("hindiText");
 
-        document.getElementById("hindiText").value = hindi;
-        setStatus("Translated to Hindi.");
+    try {
+        setStatus("Translating English to Hindi…");
+
+        // The hi target returns Hindi Devanagari text, not transliteration.
+        const hindi = await translateText(
+            englishInput.value,
+            "en",
+            "hi"
+        );
+
+        hindiInput.value = hindi;
+        hindiInput.lang = "hi";
+        hindiInput.dir = "auto";
+
+        setStatus("Hindi translation ready.");
     } catch (error) {
         console.error(error);
-        setStatus("Translation failed. Check your internet connection.");
+        setStatus(error.message || "Translation failed.");
     }
 }
 
