@@ -28,6 +28,38 @@ async function translate(source, target, text) {
     return translation;
 }
 
+async function requestTranslation(text, source, target) {
+    const value = text.trim();
+
+    if (!value) {
+        throw new Error("Please enter text first.");
+    }
+
+    const url =
+        "https://api.mymemory.translated.net/get" +
+        `?q=${encodeURIComponent(value)}` +
+        `&langpair=${source}|${target}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error("Translation service is unavailable.");
+    }
+
+    const data = await response.json();
+
+    const translatedText =
+        data?.responseData?.translatedText ||
+        data?.matches?.[0]?.translation;
+
+    if (!translatedText) {
+        console.error("Unexpected translation response:", data);
+        throw new Error("No translation was returned.");
+    }
+
+    return translatedText;
+}
+
 async function translateHindiToEnglish() {
     const hindiInput = document.getElementById("hindiText");
     const englishInput = document.getElementById("englishInput");
@@ -35,20 +67,19 @@ async function translateHindiToEnglish() {
     try {
         setStatus("Translating Hindi to English…");
 
-        const english = await translateText(
+        const result = await requestTranslation(
             hindiInput.value,
             "hi",
             "en"
         );
 
-        englishInput.value = english;
-        englishInput.lang = "en";
-        englishInput.dir = "auto";
+        englishInput.value = result;
+        englishInput.dispatchEvent(new Event("input", { bubbles: true }));
 
         setStatus("English translation ready.");
     } catch (error) {
         console.error(error);
-        setStatus(error.message || "Translation failed.");
+        setStatus(error.message);
     }
 }
 
@@ -59,21 +90,19 @@ async function translateEnglishToHindi() {
     try {
         setStatus("Translating English to Hindi…");
 
-        // The hi target returns Hindi Devanagari text, not transliteration.
-        const hindi = await translateText(
+        const result = await requestTranslation(
             englishInput.value,
             "en",
             "hi"
         );
 
-        hindiInput.value = hindi;
-        hindiInput.lang = "hi";
-        hindiInput.dir = "auto";
+        hindiInput.value = result;
+        hindiInput.dispatchEvent(new Event("input", { bubbles: true }));
 
         setStatus("Hindi translation ready.");
     } catch (error) {
         console.error(error);
-        setStatus(error.message || "Translation failed.");
+        setStatus(error.message);
     }
 }
 

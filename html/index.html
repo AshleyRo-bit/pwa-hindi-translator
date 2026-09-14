@@ -31,8 +31,11 @@
         lang="hi"
         dir="auto"></textarea>
 
-    <button id="speakButton" onclick="toggleSpeech()">
-        🎤 Speak Hindi
+    <button id="speakButton"
+        class="speech-button"
+        type="button"
+        onclick="toggleSpeech()">
+    🎤 Start Hindi
     </button>
 
     <button onclick="translateHindiToEnglish()">
@@ -55,8 +58,10 @@
         dir="auto"></textarea>
 
     <button id="englishSpeakButton"
-            onclick="toggleEnglishSpeech()">
-        🎤 Speak English
+        class="speech-button"
+        type="button"
+        onclick="toggleEnglishSpeech()">
+    🎤 Start English
     </button>
 
     <button onclick="translateEnglishToHindi()">
@@ -101,7 +106,9 @@
 </div>
 
 <div id="status"
-     class="status">
+     class="status"
+     role="status"
+     aria-live="polite">
     Ready
 </div>
 </div>
