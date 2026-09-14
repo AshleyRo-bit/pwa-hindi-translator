@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Hindi Translator</title>
+
+</head>
+
+<body>
+    <h1>Hindi Translator</h1>
+
+<div class="subtitle">
+    Hindi → English
+</div>
+
+<div class="card">
+
+    <span class="label">Hindi</span>
+
+    <textarea
+        id="hindiText"
+        placeholder="Type or speak Hindi here..."
+    ></textarea>
+
+    <button onclick="translateText()">
+        Translate
+    </button>
+
+    <button class="secondary" onclick="startSpeech()">
+        🎤 Speak Hindi
+    </button>
+
+</div>
+
+<div class="card">
+
+    <span class="label">English</span>
+
+    <div
+        id="englishText"
+        class="translation"
+    >
+        Translation will appear here.
+    </div>
+
+    <button class="secondary" onclick="speakEnglish()">
+        🔊 Speak English
+    </button>
+
+</div>
+
+<div class="card future">
+
+    <span class="label">Camera</span>
+
+    <button class="secondary" onclick="openCamera()">
+        📷 Translate Camera
+    </button>
+
+</div>
+
+<div
+    id="status"
+    class="status"
+>
+    Ready
+</div>
+</body>
+</html>
